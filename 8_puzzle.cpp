@@ -1,6 +1,6 @@
 //8 PUZZLE A STAR  HEURISTIC IS NO OF MISPLACED TILES
-
 #include <bits/stdc++.h>
+
 using namespace std;
 vector<vector<int>> goal;
 map<vector<vector<int>>, bool> visited;
