@@ -1,0 +1,52 @@
+[System]
+Name='madame'
+Type='mamdani'
+Version=2.0
+NumInputs=2
+NumOutputs=1
+NumRules=12
+AndMethod='min'
+OrMethod='max'
+ImpMethod='min'
+AggMethod='max'
+DefuzzMethod='centroid'
+
+[Input1]
+Name='dirtiness_of_load'
+Range=[0 100]
+NumMFs=4
+MF1='no_dirty':'trapmf',[-23.58 -19.81 13.02 19.26]
+MF2='lightlydirty':'trimf',[10.6 29.5244385733157 50.5]
+MF3='medium_dirty':'trimf',[39.9454425363276 57.6454425363276 80.2454425363276]
+MF4='verydirty':'trapmf',[69.8 86.0634081902245 104 118]
+
+[Input2]
+Name='weight_of_load'
+Range=[0 100]
+NumMFs=3
+MF1='lowload':'gaussmf',[8.08404011574009 17.1]
+MF2='mediumload':'gbellmf',[12.8 4.36 44.3616908850727]
+MF3='fullload':'gaussmf',[10.6 80.0068031704095]
+
+[Output1]
+Name='timerequired'
+Range=[0 100]
+NumMFs=4
+MF1='littletime':'trimf',[0.175 12.8797886393659 29.7]
+MF2='mediumtime':'gbellmf',[8.95918097754291 2.5 34.7]
+MF3='verylongtime':'gaussmf',[8.50342781580309 86.3]
+MF4='longtime':'trapmf',[41.9568031704095 54.4568031704095 66.2568031704095 81.0468031704095]
+
+[Rules]
+4 3, 3 (1) : 1
+4 2, 3 (1) : 1
+4 1, 4 (1) : 1
+3 3, 3 (1) : 1
+3 2, 2 (1) : 1
+3 1, 4 (1) : 1
+2 3, 4 (1) : 1
+2 2, 2 (1) : 1
+2 1, 1 (1) : 1
+1 3, 1 (1) : 1
+1 2, 1 (1) : 1
+1 1, 1 (1) : 1
