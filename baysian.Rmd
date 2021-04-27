@@ -1,0 +1,137 @@
+---
+title: "R Notebook"
+output:
+  html_notebook: default
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+```{r}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  +     install.packages("BiocManager")
+BiocManager::install("graph")
+BiocManager::install("Rgraphviz")
+
+
+library(bnclassify)
+library(graph)
+library(bnlearn)
+
+install.packages("e1071") 
+install.packages("caTools") 
+install.packages("caret") 
+library(bnlearn)
+library(e1071) 
+library(caTools) 
+library(caret) 
+library(dplyr)
+library(tidyverse)
+library(e1071)
+```
+```{r}
+
+```
+
+
+```{r}
+course.grades<-read.table(file.choose(),head=TRUE)
+```
+
+```{r}
+course.grades<-lapply(course.grades,as.factor)
+course.grades<-data.frame(course.grades)
+```
+```{r}
+#ques 1
+
+course.grades.net<-hc(course.grades[,-9],score="k2")   
+plot(course.grades.net)
+
+```
+```{r}
+#ques 2
+# Predicting the cpt
+course.grades.net.fit<-bn.fit(course.grades.net, course.grades[,-9])
+course.grades.net.fit
+```
+```{r}
+#ques3
+
+print("probability of having grade=AA")
+g1<-cpquery(course.grades.net.fit, event =c(PH100=="AA"), evidence = (EC100=="DD" & IT101=="CC" & MA101=="CD") , n =1000)
+print(g1)
+print("probability of having grade=AB")
+g2<-cpquery(course.grades.net.fit, event =c(PH100=="AB"), evidence = (EC100=="DD" & IT101=="CC" & MA101=="CD") , n =1000)
+print(g2)
+print("probability of having grade=BB")
+g3<-cpquery(course.grades.net.fit, event =c(PH100=="BB"), evidence = (EC100=="DD" & IT101=="CC" & MA101=="CD") , n =1000)
+print(g3)
+print("probability of having grade=BC")
+g4<-cpquery(course.grades.net.fit, event =c(PH100=="BC"), evidence = (EC100=="DD" & IT101=="CC" & MA101=="CD") , n =1000)
+print(g4)
+print("probability of having grade=CC")
+g5<-cpquery(course.grades.net.fit, event =c(PH100=="CC"), evidence = (EC100=="DD" & IT101=="CC" & MA101=="CD") , n =1000)
+print(g5)
+print("probability of having grade=CD")
+g6<-cpquery(course.grades.net.fit, event =c(PH100=="CD"), evidence = (EC100=="DD" & IT101=="CC" & MA101=="CD") , n =1000)
+print(g6)
+print("probability of having grade=DD")
+g7<-cpquery(course.grades.net.fit, event =c(PH100=="DD"), evidence = (EC100=="DD" & IT101=="CC" & MA101=="CD") , n =1000)
+print(g7)
+print("probability of having grade=F")
+g8<-cpquery(course.grades.net.fit, event =c(PH100=="F"), evidence = (EC100=="DD" & IT101=="CC" & MA101=="CD") , n =1000)
+print(g8)
+```
+
+
+
+```{r}
+#ques4
+#baysian network when courses are independent
+i<-0
+while(i<20)
+{
+  split<-sample.split(course.grades,SplitRatio = 0.7)
+  train_cl=subset(course.grades,split=="TRUE")
+  test_cl=subset(course.grades,split=="FALSE")
+  train_cl
+  test_cl
+  i=i+1
+  nb.train<-nb(class="QP",dataset=train_cl)
+  nb.train<-lp(nb.train,train_cl,smooth=0)
+  plot(nb.train)
+  p<-predict(nb.train,test_cl)
+  print(p)
+  cm<-table(predicted=p,true=test_cl$QP)
+  print(cm)
+  accuracy<-sum(cm*diag(1,nrow(cm),ncol(cm)))/sum(cm)
+  print(accuracy)
+}
+  
+```
+```{r}
+# ques 5
+# baysian network when courses are dependent
+i<-0
+while(i<20)
+{
+  split<-sample.split(course.grades,SplitRatio = 0.7)
+  train_cl=subset(course.grades,split=="TRUE")
+  test_cl=subset(course.grades,split=="FALSE")
+  train_cl
+  test_cl
+  i=i+1
+tn <- tan_cl('QP', train_cl)
+tn <- lp(tn, train_cl, smooth = 1)
+plot(tn)
+p <- predict(tn, test_cl)
+print(p)
+bnclassify::accuracy(p, test_cl$QP)
+print(accuracy)
+}
+```
+```
+
+
+
+
